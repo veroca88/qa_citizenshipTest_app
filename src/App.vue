@@ -1,28 +1,55 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header />
+
+    <b-container class="bv-example-row">
+      <b-row>
+        <b-col>
+          <QBox :currentQuestion="questions[index]" :next="next" />
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from "./components/Header.vue";
+import QBox from "./components/QuestionBox.vue";
 
 export default {
-  name: 'App',
+  name: "app",
   components: {
-    HelloWorld
-  }
-}
+    Header,
+    QBox,
+  },
+  data() {
+    return {
+      questions: [],
+      index: 0,
+    };
+  },
+  methods: {
+    next() {
+      this.index++;
+    },
+  },
+  mounted: function () {
+    fetch("https://veroca88.github.io/Data/qa_database.json", {
+      method: "get",
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((jsonData) => {
+        this.questions = jsonData.results;
+      });
+  },
+};
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
   margin-top: 60px;
+  text-align: center;
 }
 </style>
