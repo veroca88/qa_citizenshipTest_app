@@ -15,4 +15,10 @@ export default {
 </script>
 
 <style>
+.fas {
+  color: rgb(238, 185, 38);
+}
+.nav {
+  font-size: calc(1em + 1vw);
+}
 </style>
