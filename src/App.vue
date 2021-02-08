@@ -5,7 +5,11 @@
     <b-container class="bv-example-row">
       <b-row>
         <b-col>
-          <QBox :currentQuestion="questions[index]" :next="next" />
+          <QBox
+            v-if="questions.length"
+            :currentQuestion="questions[index]"
+            :next="next"
+          />
         </b-col>
       </b-row>
     </b-container>
