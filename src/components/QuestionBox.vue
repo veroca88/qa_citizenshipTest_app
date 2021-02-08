@@ -10,12 +10,17 @@
           v-for="(answer, index) in shuffledAnswers"
           :key="index"
           @click="selectedAnswer(index)"
-          :class="[selectedIndex === index ? 'selected' : '']"
+          :class="answerClass(index)"
           >{{ answer }}</b-list-group-item
         >
       </b-list-group>
 
-      <b-button @click="submitAnswer" variant="primary">Submit</b-button>
+      <b-button
+        @click="submitAnswer"
+        variant="primary"
+        :disabled="selectedIndex === null || answered"
+        >Submit</b-button
+      >
       <b-button @click="next" variant="success" href="#">Next</b-button>
     </b-jumbotron>
   </div>
@@ -35,6 +40,7 @@ export default {
       selectedIndex: null,
       correctIndex: null,
       shuffledAnswers: [],
+      answered: false,
     };
   },
   computed: {
@@ -49,6 +55,7 @@ export default {
       immediate: true,
       handler() {
         this.selectedIndex = null;
+        this.answered = false;
         this.shuffleAnswers();
       },
     },
@@ -72,7 +79,24 @@ export default {
       if (this.selectedIndex === this.correctIndex) {
         isCorrect = true;
       }
+      this.answered = true;
       this.increment(isCorrect);
+    },
+    answerClass(index) {
+      let answerClass = [];
+      if (!this.answered && this.selectedIndex === index) {
+        answerClass = "selected";
+      } else if (this.answered && this.correctIndex === index) {
+        answerClass = "correct";
+      } else if (
+        this.answered &&
+        this.selectedIndex === index &&
+        this.correctIndex !== index
+      ) {
+        answerClass = "incorrect";
+      }
+
+      return answerClass;
     },
   },
 };
@@ -97,6 +121,6 @@ export default {
   background-color: rgb(92, 189, 92);
 }
 .incorrect {
-  background-color: rgb(141, 1, 1);
+  background-color: rgba(255, 43, 43, 0.979);
 }
 </style>
