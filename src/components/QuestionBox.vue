@@ -1,7 +1,9 @@
 <template>
   <div class="qbox-container">
     <b-jumbotron>
-      <template slot="lead">{{ currentQuestion.question }}</template>
+      <template role="main" aria-labelledby="main-question" slot="lead">{{
+        currentQuestion.question
+      }}</template>
 
       <hr class="my-4" />
 
@@ -18,9 +20,13 @@
       <b-button
         @click="submitAnswer"
         variant="primary"
+        aria-describedby="submitButton"
         :disabled="selectedIndex === null || answered"
         >Submit</b-button
       >
+      <p id="submitButton">
+        If you click, you are confirming your correct answer.
+      </p>
       <b-button @click="next" variant="success" href="#">Next</b-button>
     </b-jumbotron>
   </div>
