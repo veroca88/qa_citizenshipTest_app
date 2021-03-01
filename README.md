@@ -1,5 +1,8 @@
 # Multiple-choice Practice Citizenship Test
 
+Click to start the test
+> https://citizenship-test-practice.netlify.app/
+
 ## Project setup
 ```
 npm install
