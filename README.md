@@ -1,4 +1,4 @@
-# testing-vue
+# Multiple-choice Practice Citizenship Test
 
 ## Project setup
 ```
