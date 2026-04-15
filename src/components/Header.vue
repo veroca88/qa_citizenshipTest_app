@@ -2,22 +2,34 @@
   <div>
     <b-nav tabs align="center">
       <b-nav-item disabled><b>Citizenship Quiz App</b></b-nav-item>
-      <i class="fas fa-flag-usa fa-2x"></i>
-      <b-nav-item disabled>Counter: {{ numCorrect }}/{{ numTotal }}</b-nav-item>
+      <b-nav-item disabled>
+        Score: {{ numCorrect }}/{{ numTotal }}
+        <span v-if="questionCount">({{ questionCount }} questions)</span>
+      </b-nav-item>
     </b-nav>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["numCorrect", "numTotal"],
+  props: {
+    numCorrect: {
+      type: Number,
+      required: true,
+    },
+    numTotal: {
+      type: Number,
+      required: true,
+    },
+    questionCount: {
+      type: Number,
+      default: 0,
+    },
+  },
 };
 </script>
 
 <style>
-.fas {
-  color: rgb(238, 185, 38);
-}
 .nav {
   font-size: calc(1em + 1vw);
 }

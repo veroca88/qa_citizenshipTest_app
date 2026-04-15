@@ -1,9 +1,9 @@
 <template>
   <div class="qbox-container">
     <b-jumbotron>
-      <template role="main" aria-labelledby="main-question" slot="lead">{{
-        currentQuestion.question
-      }}</template>
+      <template #lead>
+        <span id="main-question">{{ currentQuestion.question }}</span>
+      </template>
 
       <hr class="my-4" />
 
@@ -13,6 +13,8 @@
           :key="index"
           @click="selectedAnswer(index)"
           :class="answerClass(index)"
+          :aria-pressed="selectedIndex === index"
+          :disabled="answered"
           >{{ answer }}</b-list-group-item
         >
       </b-list-group>
@@ -24,9 +26,17 @@
         :disabled="selectedIndex === null || answered"
         >Submit</b-button
       >
-      <b-button type="button" @click="next" variant="success" href="#"
-        >Next</b-button
-      >
+      <b-button type="button" @click="$emit('next')" variant="success">
+        {{ isLastQuestion ? "Finish" : "Next" }}
+      </b-button>
+
+      <p v-if="answered" class="result-label">
+        {{ isAnswerCorrect ? "Correct answer." : "Incorrect answer." }}
+      </p>
+      <p v-else class="result-label">Select an option and submit your answer.</p>
+      <p class="question-meta">
+        Question {{ questionNumber }} of {{ totalQuestions }}
+      </p>
     </b-jumbotron>
   </div>
 </template>
@@ -36,9 +46,22 @@ import _ from "lodash";
 
 export default {
   props: {
-    currentQuestion: Object,
-    next: Function,
-    increment: Function,
+    currentQuestion: {
+      type: Object,
+      required: true,
+    },
+    isLastQuestion: {
+      type: Boolean,
+      default: false,
+    },
+    questionNumber: {
+      type: Number,
+      default: 1,
+    },
+    totalQuestions: {
+      type: Number,
+      default: 1,
+    },
   },
   data() {
     return {
@@ -49,10 +72,8 @@ export default {
     };
   },
   computed: {
-    answers() {
-      let answers = [...this.currentQuestion.incorrect_answers];
-      answers.push(this.currentQuestion.correct_answer);
-      return answers;
+    isAnswerCorrect() {
+      return this.selectedIndex === this.correctIndex;
     },
   },
   watch: {
@@ -67,10 +88,13 @@ export default {
   },
   methods: {
     selectedAnswer(index) {
+      if (this.answered) {
+        return;
+      }
       this.selectedIndex = index;
     },
     shuffleAnswers() {
-      let answers = [
+      const answers = [
         ...this.currentQuestion.incorrect_answers,
         this.currentQuestion.correct_answer,
       ];
@@ -80,12 +104,9 @@ export default {
       );
     },
     submitAnswer() {
-      let isCorrect = false;
-      if (this.selectedIndex === this.correctIndex) {
-        isCorrect = true;
-      }
+      const isCorrect = this.selectedIndex === this.correctIndex;
       this.answered = true;
-      this.increment(isCorrect);
+      this.$emit("answer-submitted", isCorrect);
     },
     answerClass(index) {
       let answerClass = [];
@@ -127,5 +148,15 @@ export default {
 }
 .incorrect {
   background-color: rgba(255, 43, 43, 0.979);
+}
+.result-label {
+  margin-top: 15px;
+  margin-bottom: 0;
+  font-weight: 600;
+}
+.question-meta {
+  margin-top: 8px;
+  margin-bottom: 0;
+  color: #6c757d;
 }
 </style>
