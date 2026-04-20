@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <b-nav tabs align="center">
-      <b-nav-item disabled><b>Citizenship Quiz App</b></b-nav-item>
-      <b-nav-item disabled>
+  <header class="border-bottom bg-white sticky-top">
+    <div class="container py-3 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+      <h1 class="h4 mb-0">Citizenship Quiz App</h1>
+      <p class="mb-0 fw-semibold">
         Score: {{ numCorrect }}/{{ numTotal }}
-        <span v-if="questionCount">({{ questionCount }} questions)</span>
-      </b-nav-item>
-    </b-nav>
-  </div>
+        <span v-if="questionCount" class="text-secondary">
+          ({{ questionCount }} questions)
+        </span>
+      </p>
+    </div>
+  </header>
 </template>
 
 <script>
@@ -28,9 +30,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.nav {
-  font-size: calc(1em + 1vw);
-}
-</style>
