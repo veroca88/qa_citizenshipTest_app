@@ -1,44 +1,87 @@
 <template>
-  <div class="qbox-container">
-    <b-jumbotron>
-      <template role="main" aria-labelledby="main-question" slot="lead">{{
-        currentQuestion.question
-      }}</template>
+  <section class="card shadow-sm border-0">
+    <div class="card-body p-4 p-md-5">
+      <p id="main-question" class="lead fw-semibold mb-4">
+        {{ currentQuestion.question }}
+      </p>
 
-      <hr class="my-4" />
-
-      <b-list-group>
-        <b-list-group-item
+      <div class="list-group mb-4">
+        <button
           v-for="(answer, index) in shuffledAnswers"
           :key="index"
-          @click="selectedAnswer(index)"
+          type="button"
+          class="list-group-item list-group-item-action text-start"
           :class="answerClass(index)"
-          >{{ answer }}</b-list-group-item
+          :aria-pressed="selectedIndex === index"
+          :disabled="answered"
+          @click="selectedAnswer(index)"
         >
-      </b-list-group>
+          {{ answer }}
+        </button>
+      </div>
 
-      <b-button
-        @click="submitAnswer"
-        variant="primary"
-        type="submit"
-        :disabled="selectedIndex === null || answered"
-        >Submit</b-button
-      >
-      <b-button type="button" @click="next" variant="success" href="#"
-        >Next</b-button
-      >
-    </b-jumbotron>
-  </div>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <button
+          type="button"
+          class="btn btn-primary"
+          :disabled="selectedIndex === null || answered"
+          @click="submitAnswer"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          @click="$emit('next')"
+        >
+          {{ isLastQuestion ? "Finish" : "Next" }}
+        </button>
+      </div>
+
+      <p v-if="answered" class="result-label mt-3 mb-0 fw-semibold">
+        {{ isAnswerCorrect ? "Correct answer." : "Incorrect answer." }}
+      </p>
+      <p v-else class="result-label mt-3 mb-0 fw-semibold">
+        Select an option and submit your answer.
+      </p>
+      <p class="question-meta mt-2 mb-0 text-secondary">
+        Question {{ questionNumber }} of {{ totalQuestions }}
+      </p>
+    </div>
+  </section>
 </template>
 
 <script>
-import _ from "lodash";
+const shuffleAnswers = (answers) => {
+  const shuffled = [...answers];
+
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
+  }
+
+  return shuffled;
+};
 
 export default {
+  emits: ["next", "answer-submitted"],
   props: {
-    currentQuestion: Object,
-    next: Function,
-    increment: Function,
+    currentQuestion: {
+      type: Object,
+      required: true,
+    },
+    isLastQuestion: {
+      type: Boolean,
+      default: false,
+    },
+    questionNumber: {
+      type: Number,
+      default: 1,
+    },
+    totalQuestions: {
+      type: Number,
+      default: 1,
+    },
   },
   data() {
     return {
@@ -49,10 +92,8 @@ export default {
     };
   },
   computed: {
-    answers() {
-      let answers = [...this.currentQuestion.incorrect_answers];
-      answers.push(this.currentQuestion.correct_answer);
-      return answers;
+    isAnswerCorrect() {
+      return this.selectedIndex === this.correctIndex;
     },
   },
   watch: {
@@ -67,65 +108,53 @@ export default {
   },
   methods: {
     selectedAnswer(index) {
+      if (this.answered) {
+        return;
+      }
       this.selectedIndex = index;
     },
     shuffleAnswers() {
-      let answers = [
+      const answers = [
         ...this.currentQuestion.incorrect_answers,
         this.currentQuestion.correct_answer,
       ];
-      this.shuffledAnswers = _.shuffle(answers);
+      this.shuffledAnswers = shuffleAnswers(answers);
       this.correctIndex = this.shuffledAnswers.indexOf(
         this.currentQuestion.correct_answer
       );
     },
     submitAnswer() {
-      let isCorrect = false;
-      if (this.selectedIndex === this.correctIndex) {
-        isCorrect = true;
-      }
+      const isCorrect = this.selectedIndex === this.correctIndex;
       this.answered = true;
-      this.increment(isCorrect);
+      this.$emit("answer-submitted", isCorrect);
     },
     answerClass(index) {
-      let answerClass = [];
       if (!this.answered && this.selectedIndex === index) {
-        answerClass = "selected";
-      } else if (this.answered && this.correctIndex === index) {
-        answerClass = "correct";
-      } else if (
-        this.answered &&
-        this.selectedIndex === index &&
-        this.correctIndex !== index
-      ) {
-        answerClass = "incorrect";
+        return "selected";
       }
 
-      return answerClass;
+      if (this.answered && this.correctIndex === index) {
+        return "correct";
+      }
+
+      if (this.answered && this.selectedIndex === index && this.correctIndex !== index) {
+        return "incorrect";
+      }
+
+      return "";
     },
   },
 };
 </script>
 
 <style scoped>
-.list-group {
-  margin-bottom: 15px;
-  padding: 0 15%;
-}
-.list-group-item:hover {
-  background-color: #eee;
-  cursor: pointer;
-}
-.btn {
-  margin: 0 5px;
-}
 .selected {
-  background-color: rgba(37, 131, 255, 0.603);
+  background-color: rgba(37, 131, 255, 0.22);
 }
 .correct {
-  background-color: rgb(92, 189, 92);
+  background-color: rgba(92, 189, 92, 0.3);
 }
 .incorrect {
-  background-color: rgba(255, 43, 43, 0.979);
+  background-color: rgba(255, 43, 43, 0.22);
 }
 </style>

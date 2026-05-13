@@ -1,0 +1,47 @@
+[
+  {
+    "question": "What is the supreme law of the land?",
+    "correct_answer": "The Constitution",
+    "incorrect_answers": [
+      "The Declaration of Independence",
+      "The Bill of Rights",
+      "The Articles of Confederation"
+    ]
+  },
+  {
+    "question": "What do we call the first ten amendments to the Constitution?",
+    "correct_answer": "The Bill of Rights",
+    "incorrect_answers": [
+      "The Federalist Papers",
+      "The Preamble",
+      "The Emancipation Proclamation"
+    ]
+  },
+  {
+    "question": "How many U.S. Senators are there?",
+    "correct_answer": "100",
+    "incorrect_answers": [
+      "50",
+      "435",
+      "200"
+    ]
+  },
+  {
+    "question": "Who signs bills to become laws?",
+    "correct_answer": "The President",
+    "incorrect_answers": [
+      "The Vice President",
+      "The Chief Justice",
+      "The Speaker of the House"
+    ]
+  },
+  {
+    "question": "What is one right or freedom from the First Amendment?",
+    "correct_answer": "Speech",
+    "incorrect_answers": [
+      "Trial by jury",
+      "Bear arms",
+      "Vote at age 16"
+    ]
+  }
+]
